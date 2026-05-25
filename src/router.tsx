@@ -1,5 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
-// 👇 Componentes de protección 
+// 👇 Componentes de protección
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import FrontendLogin from "./components/FrontendLogin";
@@ -13,66 +13,75 @@ import NoAccess from "./modules/no_access/NoAccess";
 import Error404 from "./modules/error/pages/Error404";
 import Help from "./modules/help/pages/Help";
 import AppMenuList from "./modules/admin/app_menu/pages/AppMenuList";
- 
-
-
-
+import UserPage from "./modules/admin/users/pages/UserPage";
 
 const router = createBrowserRouter([
-    // 🔐 Rutas de autenticación (públicas)
-    {
-        element: <FrontendLogin />,
-        hydrateFallbackElement: <div style={{ visibility: 'hidden' }}>Loading...</div>,
-        children: [
-            { path: '/login', element: <Login /> },
-            { path: '/reset-password/:token', element: <ResetPassword /> },
-            { path: "*", element: <Navigate to="/login" replace /> },
-        ],
-    },
+  // 🔐 Rutas de autenticación (públicas)
+  {
+    element: <FrontendLogin />,
+    hydrateFallbackElement: (
+      <div style={{ visibility: "hidden" }}>Loading...</div>
+    ),
+    children: [
+      { path: "/login", element: <Login /> },
+      { path: "/reset-password/:token", element: <ResetPassword /> },
+      { path: "*", element: <Navigate to="/login" replace /> },
+    ],
+  },
 
-    // 🔐 Rutas protegidas (requieren autenticación + permisos)
-    {
+  // 🔐 Rutas protegidas (requieren autenticación + permisos)
+  {
+    element: (
+      <ProtectedRoute>
+        <Frontend />
+      </ProtectedRoute>
+    ),
+    hydrateFallbackElement: (
+      <div style={{ visibility: "hidden" }}>Loading...</div>
+    ),
+    children: [
+      // 👉 Home - Solo requiere tener acceso al módulo "Home"
+      { path: "/", index: true, element: <Home /> },
+      {
+        path: "/settings",
         element: (
-            <ProtectedRoute>
-                <Frontend />
-            </ProtectedRoute>
+          <ProtectedRoute>
+            <AdminHome />
+          </ProtectedRoute>
         ),
-        hydrateFallbackElement: <div style={{ visibility: 'hidden' }}>Loading...</div>,
-        children: [
-            // 👉 Home - Solo requiere tener acceso al módulo "Home"
-            { path: '/', index: true, element: <Home /> },
-            {
-                path: '/settings',
-                element: (
-                    <ProtectedRoute>
-                        <AdminHome />
-                    </ProtectedRoute>
-                )
-            },
-            {
-                path: '/settings/app-menu',
-                element: (
-                    <ProtectedRoute>
-                        <AppMenuList />
-                    </ProtectedRoute>
-                )
-            },
-            {
-                path: '/help',
-                element: (
-                    <ProtectedRoute>
-                        <Help />
-                    </ProtectedRoute>
-                ),
-                errorElement: <ErrorPages />
-            },
-            // 👉 Página de acceso denegado
-            { path: '/sin-acceso', element: <NoAccess /> },
+      },
+      {
+        path: "/settings/app-menu",
+        element: (
+          <ProtectedRoute>
+            <AppMenuList />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/settings/users",
+        element: (
+          <ProtectedRoute>
+            <UserPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/help",
+        element: (
+          <ProtectedRoute>
+            <Help />
+          </ProtectedRoute>
+        ),
+        errorElement: <ErrorPages />,
+      },
+      // 👉 Página de acceso denegado
+      { path: "/sin-acceso", element: <NoAccess /> },
 
-            // 👉 404 dentro de rutas protegidas
-            { path: "*", element: <Error404 /> },
-        ],
-    },
+      // 👉 404 dentro de rutas protegidas
+      { path: "*", element: <Error404 /> },
+    ],
+  },
 ]);
 
 export default router;
