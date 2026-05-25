@@ -12,6 +12,7 @@ import ErrorPages from "./modules/error/pages/ErrorPages";
 import NoAccess from "./modules/no_access/NoAccess";
 import Error404 from "./modules/error/pages/Error404";
 import Help from "./modules/help/pages/Help";
+import AppMenuList from "./modules/admin/app_menu/pages/AppMenuList";
  
 
 
@@ -45,6 +46,14 @@ const router = createBrowserRouter([
                 element: (
                     <ProtectedRoute>
                         <AdminHome />
+                    </ProtectedRoute>
+                )
+            },
+            {
+                path: '/settings/app-menu',
+                element: (
+                    <ProtectedRoute>
+                        <AppMenuList />
                     </ProtectedRoute>
                 )
             },
