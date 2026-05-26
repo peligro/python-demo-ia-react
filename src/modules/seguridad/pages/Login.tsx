@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useContext } from "react";
 import { Form, Button, Card, Row, Col, Container } from "react-bootstrap";
 import { AuthContext } from "../../../context/AuthContext";
-import { loginApi } from "../services/authService";
+import { loginApi, getMeApi, logoutApi } from "../services/authService";
 
 const Login = () => {
   const auth = useContext(AuthContext);
@@ -90,15 +90,24 @@ const Login = () => {
         password: loginForm.password,
       });
 
-      // Actualizar AuthContext
-      if (auth) {
-        // El login ya actualiza el contexto internamente
+      // ✅ Validar estado del usuario después del login
+      const userData = await getMeApi();
+      
+      if (userData.metadata?.state_id === 2) {
+        // Si está inactivo, hacer logout inmediatamente
+        await logoutApi();
+        setErrors({
+          email: "Tu cuenta está inactiva. Contacta al administrador.",
+          password: "Tu cuenta está inactiva. Contacta al administrador.",
+        });
+        return;
       }
 
-      // Redirigir al home
+      // ✅ Todo OK: redirigir al home
       window.location.href = "/";
+      
     } catch (error: any) {
-      const message = error.response?.data?.message || "Credenciales incorrectas";
+      const message = error.response?.data?.message || error.message || "Credenciales incorrectas";
       setErrors({
         email: message,
         password: message,
@@ -227,7 +236,6 @@ const Login = () => {
                     </Form.Control.Feedback>
                   </div>
                 </Form.Group>
- 
 
                 {/* Botón Login */}
                 <Button

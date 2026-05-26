@@ -3,13 +3,10 @@ import type { ReactNode } from "react";
 
 // Imports de valores (funciones que se ejecutan en runtime)
 import { getMeApi, loginApi, logoutApi } from "../modules/seguridad/services/authService";
-
-// Imports de solo tipo (interfaces que solo sirven para tipado)
-import type { LoginRequest, UserResponse } from "../modules/seguridad/services/authService";
-
+import type { LoginRequest, UserResponse } from "../modules/seguridad/interfaces/userInterfaces";
 
 export interface AuthContextType {
-  user: UserResponse | null;  // ← Ahora incluye modules, profile, state
+  user: UserResponse | null;
   loading: boolean;
   error: string | null;
   login: (credentials: LoginRequest) => Promise<void>;
@@ -33,7 +30,18 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     try {
       setLoading(true);
       setError(null);
-      const userData = await getMeApi(); // ✅ Ahora extrae .user correctamente
+      const userData = await getMeApi();
+      
+      // ✅ Validar que el usuario esté activo (state_id !== 2)
+      if (userData.metadata?.state_id === 2) {
+        // Si está inactivo, cerrar sesión y redirigir
+        await logoutApi();
+        setUser(null);
+        setError("Tu cuenta está inactiva. Contacta al administrador.");
+        window.location.href = "/login";
+        return;
+      }
+      
       setUser(userData);
     } catch (err: any) {
       setUser(null);
@@ -53,9 +61,17 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setLoading(true);
       setError(null);
       await loginApi(credentials); // Cookie se setea automáticamente
+      
+      // ✅ Validar estado después del login
+      const userData = await getMeApi();
+      if (userData.metadata?.state_id === 2) {
+        await logoutApi();
+        throw new Error("Tu cuenta está inactiva. Contacta al administrador.");
+      }
+      
       await validateSession(); // Recargar datos del usuario
     } catch (err: any) {
-      const msg = err.response?.data?.message || "Error al iniciar sesión";
+      const msg = err.response?.data?.message || err.message || "Error al iniciar sesión";
       setError(msg);
       throw new Error(msg);
     } finally {
