@@ -21,7 +21,7 @@ export const userService = {
   ): Promise<UserListResponse> => {
     const params: any = { page, limit };
     if (search) {
-      params.name = search; // ✅ Backend espera 'name' no 'search'
+      params.name = search;
     }
     
     const response = await api.get<UserListResponse>(BASE_URL, { params });
@@ -60,10 +60,10 @@ export const userService = {
   },
 
   /**
-   * GET /profiles - Obtener perfiles para el selector
+   * ✅ GET /profiles/all - Obtener perfiles para el selector (sin paginación)
    */
   getProfiles: async (): Promise<UserProfileOption[]> => {
-    const response = await api.get<UserProfileOption[]>("/profiles");
+    const response = await api.get<UserProfileOption[]>("/profiles/all");  // ✅ Cambiado de /profiles a /profiles/all
     return response.data;
   },
 

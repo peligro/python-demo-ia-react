@@ -14,6 +14,7 @@ import Error404 from "./modules/error/pages/Error404";
 import Help from "./modules/help/pages/Help";
 import AppMenuList from "./modules/admin/app_menu/pages/AppMenuList";
 import UserPage from "./modules/admin/users/pages/UserPage";
+import ProfilePage from "./modules/admin/profiles/pages/ProfilePage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -63,6 +64,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <UserPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/settings/profiles",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
           </ProtectedRoute>
         ),
       },

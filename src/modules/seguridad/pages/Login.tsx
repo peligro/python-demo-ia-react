@@ -1,10 +1,8 @@
-import { useState, useEffect, useRef, useContext } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Form, Button, Card, Row, Col, Container } from "react-bootstrap";
-import { AuthContext } from "../../../context/AuthContext";
 import { loginApi, getMeApi, logoutApi } from "../services/authService";
 
 const Login = () => {
-  const auth = useContext(AuthContext);
   const [validated, setValidated] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
