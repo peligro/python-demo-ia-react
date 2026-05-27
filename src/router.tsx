@@ -15,6 +15,8 @@ import Help from "./modules/help/pages/Help";
 import AppMenuList from "./modules/admin/app_menu/pages/AppMenuList";
 import UserPage from "./modules/admin/users/pages/UserPage";
 import ProfilePage from "./modules/admin/profiles/pages/ProfilePage";
+import ProfileEditPage from "./modules/admin/profiles/pages/ProfileEditPage";
+import ProfileModulesPage from "./modules/admin/profiles/pages/ProfileModulesPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -72,6 +74,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/settings/profiles/:id/edit",
+        element: (
+          <ProtectedRoute>
+            <ProfileEditPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/settings/profiles/:id/modules",
+        element: (
+          <ProtectedRoute>
+            <ProfileModulesPage />
           </ProtectedRoute>
         ),
       },

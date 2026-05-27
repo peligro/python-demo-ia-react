@@ -24,6 +24,37 @@ export interface ProfileListResponse {
   data: ProfileItem[];
 }
 
+// ✅ Para módulos del perfil
+export interface ModuleOption {
+  id: number;
+  name: string;
+  slug: string;
+}
+
+export interface ProfileModulesResponse {
+  profile_id: number;
+  profile_name: string;
+  modules: ModuleOption[];
+  module_ids: number[];
+}
+
+// ✅ Para items de módulo
+export interface ItemOption {
+  id: number;
+  name: string;
+  code: string;
+  description?: string | null;
+}
+
+export interface ProfileModuleItemsResponse {
+  profile_id: number;
+  module_id: number;
+  module_name: string;
+  items: ItemOption[];
+  item_ids: number[];
+  total_items: number;
+}
+
 // Tipos auxiliares para el formulario
 export interface ProfileFormData {
   name: string;

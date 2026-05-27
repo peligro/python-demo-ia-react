@@ -1,18 +1,27 @@
 import { useState, useEffect } from "react";
-import { Modal, Form, Button, Table, Card, InputGroup, Badge } from "react-bootstrap";
+import { useNavigate, Link } from "react-router-dom"; // ✅ Agregar useNavigate
+import {
+  Modal,
+  Form,
+  Button,
+  Table,
+  Card,
+  InputGroup,
+  Badge,
+} from "react-bootstrap";
 import { profileService } from "../services/profileService";
 import type {
   ProfileItem,
   ProfileFormData,
   ProfileFormErrors,
-  ProfileListResponse,
 } from "../interfaces/ProfileInterface";
 import type { AlertCustomInterface } from "../../../../common/interfaces/AlertCustomInterface";
 import AlertCustom from "../../../../common/ui/AlertCustom";
 import PaginacionCustom from "../../../../common/ui/PaginacionCustom";
-import { Link } from "react-router-dom";
 
 const ProfilePage: React.FC = () => {
+  const navigate = useNavigate(); // ✅ Hook para navegación
+
   // Estado de datos
   const [profiles, setProfiles] = useState<ProfileItem[]>([]);
   const [pagination, setPagination] = useState({
@@ -73,7 +82,9 @@ const ProfilePage: React.FC = () => {
   };
 
   // Manejo de cambios en formulario
-  const handleFormChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleFormChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
 
@@ -94,7 +105,7 @@ const ProfilePage: React.FC = () => {
     headerBg: string,
     esConfirm: boolean = false,
     onConfirm?: () => void,
-    onCloseOverride?: () => void
+    onCloseOverride?: () => void,
   ) => {
     setAlertData({
       estado: true,
@@ -104,7 +115,9 @@ const ProfilePage: React.FC = () => {
       esConfirm,
       confirmText: esConfirm ? "Confirmar" : "",
       cancelText: esConfirm ? "Cancelar" : "",
-      onClose: onCloseOverride || (() => setAlertData((prev) => ({ ...prev, estado: false }))),
+      onClose:
+        onCloseOverride ||
+        (() => setAlertData((prev) => ({ ...prev, estado: false }))),
       onConfirm,
     });
   };
@@ -113,7 +126,11 @@ const ProfilePage: React.FC = () => {
   const loadProfiles = async (page: number = 1) => {
     setLoading(true);
     try {
-      const response = await profileService.index(page, pagination.per_page, search);
+      const response = await profileService.index(
+        page,
+        pagination.per_page,
+        search,
+      );
       setProfiles(response.data);
       setPagination({
         current_page: response.page,
@@ -123,7 +140,11 @@ const ProfilePage: React.FC = () => {
       });
     } catch (error: any) {
       console.error("Error cargando perfiles:", error);
-      showAlert("Error", error.response?.data?.detail || "No se pudieron cargar los perfiles", "bg-danger");
+      showAlert(
+        "Error",
+        error.response?.data?.detail || "No se pudieron cargar los perfiles",
+        "bg-danger",
+      );
     } finally {
       setLoading(false);
     }
@@ -150,18 +171,7 @@ const ProfilePage: React.FC = () => {
     setTimeout(handleShow, 100);
   };
 
-  const handleEditar = async (profile: ProfileItem) => {
-    setAccion(2);
-    setAccionId(profile.id);
-    setFormData({
-      name: profile.name,
-      description: profile.description,
-    });
-    setErrors({});
-    setBackendError("");
-    setValidated(false);
-    handleShow();
-  };
+   
 
   const handleEliminar = (profile: ProfileItem) => {
     setIsDeleting(profile.id);
@@ -175,20 +185,28 @@ const ProfilePage: React.FC = () => {
         setAlertData((prev) => ({ ...prev, estado: false }));
         try {
           await profileService.destroy(profile.id);
-          showAlert("¡Eliminado!", `El perfil "${profile.name}" ha sido eliminado.`, "bg-success");
+          showAlert(
+            "¡Eliminado!",
+            `El perfil "${profile.name}" ha sido eliminado.`,
+            "bg-success",
+          );
           setTimeout(() => {
             setAlertData((prev) => ({ ...prev, estado: false }));
             loadProfiles(pagination.current_page);
           }, 1500);
         } catch (error: any) {
           console.error("Error eliminando:", error);
-          showAlert("❌ Error", error.response?.data?.detail || "No se pudo eliminar", "bg-danger");
+          showAlert(
+            "❌ Error",
+            error.response?.data?.detail || "No se pudo eliminar",
+            "bg-danger",
+          );
         }
       },
       () => {
         setIsDeleting(null);
         setAlertData((prev) => ({ ...prev, estado: false }));
-      }
+      },
     );
   };
 
@@ -217,7 +235,11 @@ const ProfilePage: React.FC = () => {
       } else {
         if (accionId) {
           await profileService.update(accionId, formData);
-          showAlert("¡Actualizado!", "Perfil actualizado exitosamente.", "bg-success");
+          showAlert(
+            "¡Actualizado!",
+            "Perfil actualizado exitosamente.",
+            "bg-success",
+          );
         }
       }
       setTimeout(() => {
@@ -234,10 +256,15 @@ const ProfilePage: React.FC = () => {
         if (details && Array.isArray(details)) {
           const newErrors: ProfileFormErrors = {};
           details.forEach((d: any) => {
-            if (d.loc?.[1]) newErrors[d.loc[1] as keyof ProfileFormErrors] = d.msg;
+            if (d.loc?.[1])
+              newErrors[d.loc[1] as keyof ProfileFormErrors] = d.msg;
           });
           setErrors(newErrors);
-          showAlert("⚠️ Validación", "Revisa los campos marcados", "bg-warning");
+          showAlert(
+            "⚠️ Validación",
+            "Revisa los campos marcados",
+            "bg-warning",
+          );
         } else {
           setBackendError(msg);
           showAlert("⚠️ Validación", msg, "bg-warning");
@@ -322,7 +349,14 @@ const ProfilePage: React.FC = () => {
                 <i className="fas fa-search"></i>
               </Button>
               {search && (
-                <Button type="button" variant="secondary" onClick={() => { setSearch(""); loadProfiles(1); }}>
+                <Button
+                  type="button"
+                  variant="secondary"
+                  onClick={() => {
+                    setSearch("");
+                    loadProfiles(1);
+                  }}
+                >
                   <i className="fas fa-times"></i>
                 </Button>
               )}
@@ -357,7 +391,11 @@ const ProfilePage: React.FC = () => {
             </div>
             <h5 className="text-muted">No hay perfiles registrados.</h5>
             <p className="text-muted">Comienza creando tu primer perfil.</p>
-            <Button variant="outline-primary" onClick={handleCrear} className="mt-2">
+            <Button
+              variant="outline-primary"
+              onClick={handleCrear}
+              className="mt-2"
+            >
               <i className="fas fa-plus me-2"></i>Crear Perfil
             </Button>
           </div>
@@ -365,48 +403,103 @@ const ProfilePage: React.FC = () => {
           <Card className="border-0 shadow-sm">
             <Card.Body className="p-0">
               <div className="table-responsive">
-                <Table className="table-bordered table-hover table-striped mb-0" responsive>
+                <Table
+                  className="table-bordered table-hover table-striped mb-0"
+                  responsive
+                >
                   <thead className="bg-primary text-white">
                     <tr>
-                      <th className="px-4 py-3 text-center" style={{ width: "8%" }}>ID</th>
+                      <th
+                        className="px-4 py-3 text-center"
+                        style={{ width: "8%" }}
+                      >
+                        ID
+                      </th>
                       <th className="px-4 py-3">Nombre</th>
                       <th className="px-4 py-3">Descripción</th>
-                      <th className="px-4 py-3 text-center" style={{ width: "15%" }}>Acciones</th>
+                      <th
+                        className="px-4 py-3 text-center"
+                        style={{ width: "20%" }}
+                      >
+                        Acciones
+                      </th>
                     </tr>
                   </thead>
                   <tbody>
                     {loading ? (
                       <tr>
                         <td colSpan={4} className="text-center py-4">
-                          <div className="spinner-border text-primary" role="status">
+                          <div
+                            className="spinner-border text-primary"
+                            role="status"
+                          >
                             <span className="visually-hidden">Cargando...</span>
                           </div>
                         </td>
                       </tr>
                     ) : (
                       profiles.map((profile, index) => (
-                        <tr key={profile.id} className="align-middle" style={{ backgroundColor: index % 2 === 0 ? "#f8f9fa" : "white" }}>
-                          <td className="px-4 py-3 text-center fw-semibold">{profile.id}</td>
+                        <tr
+                          key={profile.id}
+                          className="align-middle"
+                          style={{
+                            backgroundColor:
+                              index % 2 === 0 ? "#f8f9fa" : "white",
+                          }}
+                        >
+                          <td className="px-4 py-3 text-center fw-semibold">
+                            {profile.id}
+                          </td>
                           <td className="px-4 py-3 fw-medium">
                             <Badge bg="info" text="dark">
                               <i className="fas fa-user-tag me-1"></i>
                               {profile.name}
                             </Badge>
                           </td>
-                          <td className="px-4 py-3 text-muted small">{profile.description}</td>
+                          <td className="px-4 py-3 text-muted small">
+                            {profile.description}
+                          </td>
                           <td className="px-4 py-3">
-                            <div className="d-flex justify-content-center gap-2">
-                              <Button variant="outline-primary" size="sm" onClick={() => handleEditar(profile)}>
+                            <div className="d-flex justify-content-center gap-1">
+                              {/* ✅ Editar → va a página de edición */}
+                              <Button
+                                variant="outline-primary"
+                                size="sm"
+                                onClick={() =>
+                                  navigate(`/settings/profiles/${profile.id}/edit`)
+                                }
+                                title="Editar perfil"
+                              >
                                 <i className="fas fa-edit"></i>
                               </Button>
+
+                              {/* ✅ Ver módulos → va a página de módulos */}
+                              <Button
+                                variant="outline-secondary"
+                                size="sm"
+                                onClick={() =>
+                                  navigate(
+                                    `/settings/profiles/${profile.id}/modules`,
+                                  )
+                                }
+                                title="Gestionar módulos"
+                              >
+                                <i className="fas fa-layer-group"></i>
+                              </Button>
+
+                              {/* Eliminar */}
                               <Button
                                 variant="outline-danger"
                                 size="sm"
                                 onClick={() => handleEliminar(profile)}
                                 disabled={isDeleting === profile.id}
+                                title="Eliminar perfil"
                               >
                                 {isDeleting === profile.id ? (
-                                  <span className="spinner-border spinner-border-sm" role="status"></span>
+                                  <span
+                                    className="spinner-border spinner-border-sm"
+                                    role="status"
+                                  ></span>
                                 ) : (
                                   <i className="fas fa-trash"></i>
                                 )}
@@ -443,22 +536,32 @@ const ProfilePage: React.FC = () => {
           <Modal.Header
             className="border-0"
             style={{
-              background: accion === 1
-                ? "linear-gradient(90deg, #3b82f6, #2563eb)"
-                : "linear-gradient(90deg, #f59e0b, #d97706)",
+              background:
+                accion === 1
+                  ? "linear-gradient(90deg, #3b82f6, #2563eb)"
+                  : "linear-gradient(90deg, #f59e0b, #d97706)",
               color: "white",
             }}
           >
             <Modal.Title className="fw-bold">
-              <i className={`fas ${accion === 1 ? "fa-plus" : "fa-edit"} me-2`}></i>
+              <i
+                className={`fas ${accion === 1 ? "fa-plus" : "fa-edit"} me-2`}
+              ></i>
               {accion === 1 ? "Crear" : "Editar"}
             </Modal.Title>
-            <button type="button" className="btn-close btn-close-white" onClick={handleClose}></button>
+            <button
+              type="button"
+              className="btn-close btn-close-white"
+              onClick={handleClose}
+            ></button>
           </Modal.Header>
 
           <Modal.Body className="p-4">
             {backendError && (
-              <div className="alert alert-danger d-flex align-items-center mb-3" role="alert">
+              <div
+                className="alert alert-danger d-flex align-items-center mb-3"
+                role="alert"
+              >
                 <i className="fas fa-exclamation-circle me-2"></i>
                 <span className="small">{backendError}</span>
               </div>
@@ -480,7 +583,9 @@ const ProfilePage: React.FC = () => {
                     disabled={processing}
                     autoFocus
                   />
-                  <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">
+                    {errors.name}
+                  </Form.Control.Feedback>
                 </Form.Group>
               </div>
 
@@ -496,10 +601,16 @@ const ProfilePage: React.FC = () => {
                     value={formData.description}
                     onChange={handleFormChange}
                     isInvalid={!!errors.description}
-                    isValid={validated && !errors.description && formData.description !== ""}
+                    isValid={
+                      validated &&
+                      !errors.description &&
+                      formData.description !== ""
+                    }
                     disabled={processing}
                   />
-                  <Form.Control.Feedback type="invalid">{errors.description}</Form.Control.Feedback>
+                  <Form.Control.Feedback type="invalid">
+                    {errors.description}
+                  </Form.Control.Feedback>
                   <Form.Text className="text-muted">
                     Mínimo 10 caracteres, máximo 500
                   </Form.Text>
@@ -509,7 +620,11 @@ const ProfilePage: React.FC = () => {
           </Modal.Body>
 
           <Modal.Footer className="border-0">
-            <Button variant="secondary" onClick={handleClose} disabled={processing}>
+            <Button
+              variant="secondary"
+              onClick={handleClose}
+              disabled={processing}
+            >
               <i className="fas fa-times me-2"></i>Cancelar
             </Button>
             <Button
@@ -519,7 +634,10 @@ const ProfilePage: React.FC = () => {
             >
               {processing ? (
                 <>
-                  <span className="spinner-border spinner-border-sm me-2" role="status"></span>
+                  <span
+                    className="spinner-border spinner-border-sm me-2"
+                    role="status"
+                  ></span>
                   Procesando...
                 </>
               ) : accion === 1 ? (
