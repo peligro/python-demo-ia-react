@@ -665,6 +665,7 @@ footer {
     padding-right: 0.75rem !important;
   }
 }
+/* Efectos para las cards */
 .hover-shadow:hover {
   box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
 }
@@ -673,15 +674,22 @@ footer {
   transition: all 0.2s ease-in-out;
 }
 
-.hover-bg-light:hover {
-  background-color: #e9ecef !important;
+/* Estilo para los pills de accesos rápidos */
+.quick-access-pill {
+  font-size: 0.9rem;
+  white-space: nowrap;
 }
 
-/* Animación suave para las cards */
-.card-module {
-  transition: transform 0.2s, box-shadow 0.2s;
+.quick-access-pill:hover {
+  color: #fff !important;
+  text-decoration: none;
 }
 
-.card-module:hover {
-  transform: translateY(-4px);
+/* Animación suave para íconos */
+.quick-access-pill i {
+  transition: transform 0.2s;
+}
+
+.quick-access-pill:hover i {
+  transform: scale(1.1);
 }

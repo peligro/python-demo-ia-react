@@ -4,6 +4,50 @@ import { Card, Container, Row, Col, Spinner } from "react-bootstrap";
 import { homeMenuService } from "../../admin/home_menu/services/homeMenuService";
 import type { HomeMenuItem } from "../../admin/home_menu/interfaces/HomeMenuInterface";
 
+// ✅ Configuración de Accesos Rápidos con estilos personalizados
+const QUICK_ACCESS_CONFIG = [
+  {
+    title: "www.cesarcancino.com",
+    url: "https://www.cesarcancino.com",
+    icon: "fas fa-globe",
+    color: "#3B82F6", // Azul
+    gradient: "linear-gradient(135deg, #3B82F6, #6366F1)",
+    description: "Visitar mi sitio web personal",
+  },
+  {
+    title: "Ebook Desarrollo para IA",
+    url: "https://ai-ebook.cesarcancino.com/intro",
+    icon: "fas fa-book-open",
+    color: "#10B981", // Verde esmeralda
+    gradient: "linear-gradient(135deg, #10B981, #14B8A6)",
+    description: "Guía práctica de desarrollo para inteligencia artificial",
+  },
+  {
+    title: "Curso APIs de IA",
+    url: "https://integracion-de-apis-de-ia-de-cero-a-experto.cesarcancino.com/",
+    icon: "fas fa-robot",
+    color: "#8B5CF6", // Violeta
+    gradient: "linear-gradient(135deg, #8B5CF6, #A78BFA)",
+    description: "Integración de APIs de IA de Cero a Experto",
+  },
+  {
+    title: "GitHub",
+    url: "https://github.com/peligro",
+    icon: "fab fa-github-alt",
+    color: "#64748B", // Gris azulado
+    gradient: "linear-gradient(135deg, #64748B, #94A3B8)",
+    description: "Mis proyectos de código abierto",
+  },
+  {
+    title: "LinkedIn",
+    url: "https://www.linkedin.com/in/cesarcancino",
+    icon: "fab fa-linkedin-in",
+    color: "#0A66C2", // Azul LinkedIn
+    gradient: "linear-gradient(135deg, #0A66C2, #0077B5)",
+    description: "Conecta conmigo profesionalmente",
+  },
+];
+
 const Home = () => {
   const [homeMenus, setHomeMenus] = useState<HomeMenuItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -13,9 +57,7 @@ const Home = () => {
     const loadHomeMenus = async () => {
       try {
         setLoading(true);
-        // ✅ El backend ya filtra por permisos del usuario (profile_id)
         const data = await homeMenuService.getAll();
-        // Ordenar por order ascendente
         const sorted = [...data].sort((a, b) => a.order - b.order);
         setHomeMenus(sorted);
       } catch (err: any) {
@@ -28,8 +70,6 @@ const Home = () => {
 
     loadHomeMenus();
   }, []);
-
-  
 
   if (loading) {
     return (
@@ -97,7 +137,7 @@ const Home = () => {
                       style={{
                         width: "64px",
                         height: "64px",
-                        backgroundColor: `${item.color}20`, // 20% opacity
+                        backgroundColor: `${item.color}20`,
                         color: item.color,
                         fontSize: "1.5rem"
                       }}
@@ -114,7 +154,6 @@ const Home = () => {
                     <Card.Text className="text-muted small mb-3">
                       {item.description}
                     </Card.Text>
- 
                   </Card.Body>
                 </Card>
               </Link>
@@ -131,7 +170,7 @@ const Home = () => {
         </div>
       )}
 
-      {/* Accesos Rápidos */}
+      {/* ✅ Accesos Rápidos con estilos personalizados */}
       <Row className="g-3">
         <Col xs={12}>
           <h3 className="h5 fw-bold mb-3">
@@ -139,51 +178,34 @@ const Home = () => {
             Accesos Rápidos
           </h3>
         </Col>
-        <Col xs="auto">
+        
+        {QUICK_ACCESS_CONFIG.map((access, idx) => (
+          <Col key={idx} xs="auto">
             <a 
-              href="https://www.cesarcancino.com" 
-              className="text-decoration-none d-inline-flex align-items-center gap-2 px-3 py-2 rounded border bg-light hover-bg-light transition-all"
-              style={{ transition: "background-color 0.2s" }}
-              title="Visitar mi sitio web"
+              href={access.url}
+              className="text-decoration-none d-inline-flex align-items-center gap-2 px-3 py-2 rounded-pill border-0 shadow-sm quick-access-pill transition-all"
+              title={access.description}
               target="_blank"
               rel="noopener noreferrer"
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#e9ecef"}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
+              style={{
+                background: access.gradient,
+                color: "#fff",
+                transition: "transform 0.2s, box-shadow 0.2s",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-2px)";
+                e.currentTarget.style.boxShadow = `0 0.5rem 1rem ${access.color}40`; // 25% opacity
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+                e.currentTarget.style.boxShadow = "0 0.125rem 0.25rem rgba(0,0,0,0.075)";
+              }}
             >
-              <i className={`fas fa-user`} ></i>
-              <span className="fw-medium">www.cesarcancino.com</span>
+              <i className={`fas fa-${access.icon} me-1`}></i>
+              <span className="fw-medium">{access.title}</span>
             </a>
           </Col>
-          <Col xs="auto">
-            <a 
-              href="https://ai-ebook.cesarcancino.com/intro" 
-              className="text-decoration-none d-inline-flex align-items-center gap-2 px-3 py-2 rounded border bg-light hover-bg-light transition-all"
-              style={{ transition: "background-color 0.2s" }}
-              title="Visitar mi sitio web"
-              target="_blank"
-              rel="noopener noreferrer"
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#e9ecef"}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
-            >
-              <i className={`fas fa-question-circle`} ></i>
-              <span className="fw-medium">Ebook Desarrollo para Inteligencia Artificial</span>
-            </a>
-          </Col>
-          <Col xs="auto">
-            <a 
-              href="https://integracion-de-apis-de-ia-de-cero-a-experto.cesarcancino.com/" 
-              className="text-decoration-none d-inline-flex align-items-center gap-2 px-3 py-2 rounded border bg-light hover-bg-light transition-all"
-              style={{ transition: "background-color 0.2s" }}
-              title="Integración de APIs de IA de Cero a Experto"
-              target="_blank"
-              rel="noopener noreferrer"
-              onMouseEnter={(e) => e.currentTarget.style.backgroundColor = "#e9ecef"}
-              onMouseLeave={(e) => e.currentTarget.style.backgroundColor = "#f8f9fa"}
-            >
-              <i className={`fas fa-question-circle`} ></i>
-              <span className="fw-medium">Curso Integración de APIs de IA de Cero a Experto</span>
-            </a>
-          </Col>
+        ))}
       </Row>
     </Container>
   );
