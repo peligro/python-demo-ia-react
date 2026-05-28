@@ -92,7 +92,7 @@ const ProfileModulesPage: React.FC = () => {
                 isLoading: false,
               };
             } catch (error) {
-              console.error(`Error cargando items del módulo ${m.id}:`, error);
+              //console.error(`Error cargando items del módulo ${m.id}:`, error);
               return {
                 ...m,
                 items: [],
