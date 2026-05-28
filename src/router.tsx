@@ -19,6 +19,7 @@ import ProfileEditPage from "./modules/admin/profiles/pages/ProfileEditPage";
 import ProfileModulesPage from "./modules/admin/profiles/pages/ProfileModulesPage";
 import ItemPage from "./modules/admin/items/pages/ItemPage";
 import ModulePage from "./modules/admin/modules/pages/ModulePage";
+import HomeMenuPage from "./modules/admin/home_menu/pages/HomeMenuPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -108,6 +109,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ModulePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/settings/home-menu",
+        element: (
+          <ProtectedRoute>
+            <HomeMenuPage />
           </ProtectedRoute>
         ),
       },
