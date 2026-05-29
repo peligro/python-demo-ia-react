@@ -106,19 +106,19 @@ export const profileService = {
    * GET /profiles/{profileId}/modules/{moduleId}/items - Obtener items de un módulo
    */
   getModuleItems: async (
-  profileId: number,
-  moduleId: number,
-): Promise<ProfileModuleItemsResponse> => {
-  //console.log(`🔧 profileService.getModuleItems called:`, { profileId, moduleId });
-  
-  const url = `${BASE_URL}/${profileId}/modules/${moduleId}/items`;
-  //console.log(`🌐 GET ${url}`);
-  
-  const response = await api.get<ProfileModuleItemsResponse>(url);
-  
-  //console.log(`✅ profileService.getModuleItems response:`, response.data);
-  return response.data;
-},
+    profileId: number,
+    moduleId: number,
+  ): Promise<ProfileModuleItemsResponse> => {
+    //console.log(`🔧 profileService.getModuleItems called:`, { profileId, moduleId });
+
+    const url = `${BASE_URL}/${profileId}/modules/${moduleId}/items`;
+    //console.log(`🌐 GET ${url}`);
+
+    const response = await api.get<ProfileModuleItemsResponse>(url);
+
+    //console.log(`✅ profileService.getModuleItems response:`, response.data);
+    return response.data;
+  },
 
   /**
    * POST /profiles/{profileId}/modules/{moduleId}/items - Asignar item
@@ -152,8 +152,20 @@ export const profileService = {
    * GET /modules/all - Obtener todos los módulos disponibles (para select)
    */
   getAllModules: async (): Promise<ModuleOption[]> => {
-    const response = await api.get<ModuleOption[]>("/modules");
-    return response.data;
+    const response = await api.get<any>("/modules");
+
+    // Si es array directo, retornarlo
+    if (Array.isArray(response.data)) {
+      return response.data;
+    }
+
+    // Si es respuesta paginada, extraer el array 'data'
+    if (response.data?.data && Array.isArray(response.data.data)) {
+      return response.data.data;
+    }
+
+    // Fallback: array vacío
+    return [];
   },
 
   /**

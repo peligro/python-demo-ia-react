@@ -20,6 +20,7 @@ import ProfileModulesPage from "./modules/admin/profiles/pages/ProfileModulesPag
 import ItemPage from "./modules/admin/items/pages/ItemPage";
 import ModulePage from "./modules/admin/modules/pages/ModulePage";
 import HomeMenuPage from "./modules/admin/home_menu/pages/HomeMenuPage";
+import AgenteKBPage from "./modules/portfolio/agente_knowledge_base/pages/AgenteKBPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -117,6 +118,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <HomeMenuPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/agente-kb",
+        element: (
+          <ProtectedRoute>
+            <AgenteKBPage />
           </ProtectedRoute>
         ),
       },
