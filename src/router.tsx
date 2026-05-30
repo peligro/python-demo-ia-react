@@ -29,6 +29,7 @@ import ChatHistoryPage from "./modules/portfolio/chat_history/pages/ChatHistoryP
 import ImageRecognitionPage from "./modules/portfolio/image_recognition/pages/ImageRecognitionPage";
 import AudioTranscriptPage from "./modules/portfolio/audio_transcript/pages/AudioTranscriptPage";
 import VideoAnalysisPage from "./modules/portfolio/video_analysis/pages/VideoAnalysisPage";
+import AgenteKBLogsPage from "./modules/portfolio/agente_kb_logs/pages/AgenteKBLogsPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -198,6 +199,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AgenteKBPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/agente-kb-logs",
+        element: (
+          <ProtectedRoute>
+            <AgenteKBLogsPage />
           </ProtectedRoute>
         ),
       },
