@@ -25,6 +25,7 @@ import PromptBasicPage from "./modules/portfolio/prompt_basic/pages/PromptBasicP
 import TraduccionPage from "./modules/portfolio/traduccion_textos/pages/TraduccionPage";
 import AnalisisSentimientoPage from "./modules/portfolio/analisis_sentimiento/pages/AnalisisSentimientoPage";
 import GenerateSQLPage from "./modules/portfolio/generate_sql/pages/GenerateSQLPage";
+import ChatHistoryPage from "./modules/portfolio/chat_history/pages/ChatHistoryPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -162,6 +163,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <GenerateSQLPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/chat-history",
+        element: (
+          <ProtectedRoute>
+            <ChatHistoryPage />
           </ProtectedRoute>
         ),
       },
