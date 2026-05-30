@@ -21,6 +21,7 @@ import ItemPage from "./modules/admin/items/pages/ItemPage";
 import ModulePage from "./modules/admin/modules/pages/ModulePage";
 import HomeMenuPage from "./modules/admin/home_menu/pages/HomeMenuPage";
 import AgenteKBPage from "./modules/portfolio/agente_knowledge_base/pages/AgenteKBPage";
+import PromptBasicPage from "./modules/portfolio/prompt_basic/pages/PromptBasicPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -126,6 +127,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AgenteKBPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/prompt-basic",
+        element: (
+          <ProtectedRoute>
+            <PromptBasicPage />
           </ProtectedRoute>
         ),
       },

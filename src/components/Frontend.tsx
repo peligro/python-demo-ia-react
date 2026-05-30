@@ -5,7 +5,6 @@ import Header from "./Header";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import { getDiasSemana, getMeses } from "../common/helpers/helpers";
-import ChatBot from "../modules/domitila/component/Chatbot";
 
 
 
@@ -85,7 +84,6 @@ const Frontend = () => {
           </div>
         </main>
       </div>
-      <ChatBot />
       <Footer />
     </div>
   );
