@@ -28,6 +28,7 @@ import GenerateSQLPage from "./modules/portfolio/generate_sql/pages/GenerateSQLP
 import ChatHistoryPage from "./modules/portfolio/chat_history/pages/ChatHistoryPage";
 import ImageRecognitionPage from "./modules/portfolio/image_recognition/pages/ImageRecognitionPage";
 import AudioTranscriptPage from "./modules/portfolio/audio_transcript/pages/AudioTranscriptPage";
+import VideoAnalysisPage from "./modules/portfolio/video_analysis/pages/VideoAnalysisPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -189,6 +190,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AudioTranscriptPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/video-analysis",
+        element: (
+          <ProtectedRoute>
+            <VideoAnalysisPage />
           </ProtectedRoute>
         ),
       },
