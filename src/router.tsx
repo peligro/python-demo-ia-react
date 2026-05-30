@@ -24,6 +24,7 @@ import AgenteKBPage from "./modules/portfolio/agente_knowledge_base/pages/Agente
 import PromptBasicPage from "./modules/portfolio/prompt_basic/pages/PromptBasicPage";
 import TraduccionPage from "./modules/portfolio/traduccion_textos/pages/TraduccionPage";
 import AnalisisSentimientoPage from "./modules/portfolio/analisis_sentimiento/pages/AnalisisSentimientoPage";
+import GenerateSQLPage from "./modules/portfolio/generate_sql/pages/GenerateSQLPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -153,6 +154,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AnalisisSentimientoPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/generate-sql",
+        element: (
+          <ProtectedRoute>
+            <GenerateSQLPage />
           </ProtectedRoute>
         ),
       },
