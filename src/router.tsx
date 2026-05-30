@@ -26,6 +26,7 @@ import TraduccionPage from "./modules/portfolio/traduccion_textos/pages/Traducci
 import AnalisisSentimientoPage from "./modules/portfolio/analisis_sentimiento/pages/AnalisisSentimientoPage";
 import GenerateSQLPage from "./modules/portfolio/generate_sql/pages/GenerateSQLPage";
 import ChatHistoryPage from "./modules/portfolio/chat_history/pages/ChatHistoryPage";
+import ImageRecognitionPage from "./modules/portfolio/image_recognition/pages/ImageRecognitionPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -171,6 +172,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ChatHistoryPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/image-recognition",
+        element: (
+          <ProtectedRoute>
+            <ImageRecognitionPage />
           </ProtectedRoute>
         ),
       },
