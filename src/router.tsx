@@ -22,6 +22,7 @@ import ModulePage from "./modules/admin/modules/pages/ModulePage";
 import HomeMenuPage from "./modules/admin/home_menu/pages/HomeMenuPage";
 import AgenteKBPage from "./modules/portfolio/agente_knowledge_base/pages/AgenteKBPage";
 import PromptBasicPage from "./modules/portfolio/prompt_basic/pages/PromptBasicPage";
+import TraduccionPage from "./modules/portfolio/traduccion_textos/pages/TraduccionPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -135,6 +136,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <PromptBasicPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/traduccion-textos",
+        element: (
+          <ProtectedRoute>
+            <TraduccionPage />
           </ProtectedRoute>
         ),
       },
