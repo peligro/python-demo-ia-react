@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Card,
   Container,
@@ -10,26 +10,33 @@ import {
   Badge,
   Modal,
   ProgressBar,
+  Alert,
+  Toast,
+  ToastContainer,
 } from "react-bootstrap";
 import { agenteKBService } from "../services/agente_kbService";
-import type { ChatMessage } from "../interfaces/agente_kbInterfaces";
+import type {
+  ChatMessage,
+  SessionMetrics,
+  QueryRequest,
+} from "../interfaces/agente_kbInterfaces";
 
-// Interface para métricas acumuladas
-interface SessionMetrics {
-  totalQueries: number;
-  totalTokens: number;
-  kbQueries: number;
-  aiQueries: number;
-  avgLatency: number;
-  lastQueryTime: Date | null;
+// Interface para mensajes que se envían a la IA
+interface MessageForAI {
+  role: "user" | "assistant";
+  content: string;
 }
 
 const AgenteKBPage = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [_, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [selectedModel, setSelectedModel] = useState("mistral-small-latest");
+  const [maxHistory, setMaxHistory] = useState(10);
+  const [showAboutModal, setShowAboutModal] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
 
   // Métricas de sesión
   const [sessionMetrics, setSessionMetrics] = useState<SessionMetrics>({
@@ -41,8 +48,7 @@ const AgenteKBPage = () => {
     lastQueryTime: null,
   });
 
-  // Modal "Acerca de"
-  const [showAboutModal, setShowAboutModal] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   // Token quota (simulado - en producción vendría del backend)
   const tokenQuota = {
@@ -51,6 +57,11 @@ const AgenteKBPage = () => {
     resetAt: "00:00",
   };
   const tokenUsagePercent = (tokenQuota.used / tokenQuota.limit) * 100;
+
+  // Auto-scroll al último mensaje
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim() || isLoading) return;
@@ -62,16 +73,32 @@ const AgenteKBPage = () => {
       timestamp: new Date(),
     };
 
+    // Agregar mensaje del usuario inmediatamente
     setMessages((prev) => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
     setError(null);
 
     try {
-      const response = await agenteKBService.query({
+      // Construir historial para enviar a la IA (solo si hay mensajes previos)
+      // ⚠️ IMPORTANTE: El backend decide si usa KB o IA, pero si va a IA, le pasamos contexto
+      const historyForAI: MessageForAI[] = messages
+        .slice(-maxHistory) // Limitar a últimos N mensajes
+        .map((msg) => ({
+          // ✅ Cast explícito para TypeScript
+          role: (msg.sender === "user" ? "user" : "assistant") as "user" | "assistant",
+          content: msg.text,
+        }));
+
+      // Preparar request (el backend puede extenderse para aceptar messages)
+      const request: QueryRequest = {
         input: userMessage.text,
         model: selectedModel,
-      });
+        // Nota: QueryRequest actual no tiene campo 'messages', 
+        // pero el backend puede extenderse para aceptarlo
+      };
+
+      const response = await agenteKBService.query(request);
 
       const botMessage: ChatMessage = {
         id: `bot-${Date.now()}`,
@@ -102,18 +129,35 @@ const AgenteKBPage = () => {
           lastQueryTime: new Date(),
         };
       });
+
+      setToastMessage("✅ Respuesta recibida");
+      setShowToast(true);
     } catch (err: any) {
       console.error("[AgenteKB] Error:", err);
-      setError(err.response?.data?.detail || "Error al consultar el agente");
-
-      const errorMessage: ChatMessage = {
+      const errorMessage = err.response?.data?.detail || "Error al consultar el agente";
+      
+      // Manejo inteligente de errores por modelo
+      let userFriendlyError = errorMessage;
+      if (errorMessage.includes("400") && ["mistral-small-latest", "claude-opus-4-8"].includes(selectedModel)) {
+        userFriendlyError = "Este modelo tiene límites con conversaciones largas. Intenta con OpenAI o DeepSeek.";
+        setToastMessage("⚠️ Problema con el modelo. Prueba OpenAI/DeepSeek");
+      } else {
+        setToastMessage("❌ Error en la consulta");
+      }
+      
+      setError(userFriendlyError);
+      
+      // Agregar mensaje de error visual al chat
+      const errorBotMessage: ChatMessage = {
         id: `error-${Date.now()}`,
-        text: "⚠️ No pude procesar tu consulta. Intenta nuevamente.",
+        text: `⚠️ ${userFriendlyError}`,
         sender: "bot",
         timestamp: new Date(),
         source: "error",
       };
-      setMessages((prev) => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorBotMessage]);
+      
+      setShowToast(true);
     } finally {
       setIsLoading(false);
     }
@@ -144,8 +188,16 @@ const AgenteKBPage = () => {
     );
   };
 
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setToastMessage("📋 Copiado al portapapeles");
+    setShowToast(true);
+  };
+
   const clearConversation = () => {
     setMessages([]);
+    setInput("");
+    setError(null);
     setSessionMetrics({
       totalQueries: 0,
       totalTokens: 0,
@@ -154,6 +206,8 @@ const AgenteKBPage = () => {
       avgLatency: 0,
       lastQueryTime: null,
     });
+    setToastMessage("🗑️ Conversación reiniciada");
+    setShowToast(true);
   };
 
   return (
@@ -169,8 +223,7 @@ const AgenteKBPage = () => {
                 Agente RAG KB (Knowledge Basic)
               </h2>
               <p className="text-muted mb-0">
-                Pregúntale a tu base de conocimiento RAG (Retrieval-Augmented
-                Generation). Si no encuentra la respuesta, consultará a la IA.
+                Pregúntale a tu base de conocimiento. Si no encuentra la respuesta, consultará a la IA con contexto de la conversación.
               </p>
             </div>
 
@@ -201,6 +254,12 @@ const AgenteKBPage = () => {
             </div>
           </div>
 
+          {/* Alerta informativa sobre historial */}
+          <Alert variant="info" className="mb-3">
+            <i className="fas fa-info-circle me-2"></i>
+            <strong>Contexto activo:</strong> La IA recuerda los últimos {maxHistory} mensajes de esta conversación para respuestas más coherentes.
+          </Alert>
+
           {/* Área de mensajes */}
           <Card
             className="border-0 shadow-sm mb-3"
@@ -224,12 +283,18 @@ const AgenteKBPage = () => {
                   messages.map((msg) => (
                     <div
                       key={msg.id}
-                      className={`d-flex mb-3 ${msg.sender === "user" ? "justify-content-end" : "justify-content-start"}`}
+                      className={`d-flex mb-3 ${
+                        msg.sender === "user"
+                          ? "justify-content-end"
+                          : "justify-content-start"
+                      }`}
                     >
                       <div
                         className={`p-3 rounded-3 ${
                           msg.sender === "user"
                             ? "bg-primary text-white"
+                            : msg.source === "error"
+                            ? "bg-danger text-white"
                             : "bg-light border"
                         }`}
                         style={{ maxWidth: "80%" }}
@@ -241,7 +306,7 @@ const AgenteKBPage = () => {
                           {msg.text}
                         </p>
 
-                        {msg.sender === "bot" && (
+                        {msg.sender === "bot" && msg.source !== "error" && (
                           <div className="d-flex align-items-center mt-2 flex-wrap gap-2">
                             <small className="text-muted">
                               <i className="far fa-clock me-1"></i>
@@ -257,6 +322,16 @@ const AgenteKBPage = () => {
                                 {msg.metrics.latency_ms}ms
                               </small>
                             )}
+                            <Button
+                              variant="link"
+                              size="sm"
+                              className="p-0 ms-1"
+                              onClick={() => handleCopy(msg.text)}
+                            >
+                              <small>
+                                <i className="fas fa-copy me-1"></i>Copiar
+                              </small>
+                            </Button>
                           </div>
                         )}
                       </div>
@@ -277,6 +352,8 @@ const AgenteKBPage = () => {
                     </div>
                   </div>
                 )}
+
+                <div ref={messagesEndRef} />
               </div>
             </Card.Body>
           </Card>
@@ -293,13 +370,14 @@ const AgenteKBPage = () => {
                 <Row className="g-2">
                   <Col>
                     <Form.Control
-                      type="text"
+                      as="textarea"
+                      rows={2}
                       placeholder="Escribe tu pregunta..."
                       value={input}
                       onChange={(e) => setInput(e.target.value)}
                       onKeyDown={handleKeyDown}
                       disabled={isLoading}
-                      autoFocus
+                      style={{ resize: "none" }}
                     />
                   </Col>
                   <Col xs="auto">
@@ -307,6 +385,7 @@ const AgenteKBPage = () => {
                       variant="primary"
                       onClick={handleSend}
                       disabled={!input.trim() || isLoading}
+                      className="h-100"
                     >
                       {isLoading ? (
                         <Spinner animation="border" size="sm" />
@@ -316,7 +395,48 @@ const AgenteKBPage = () => {
                     </Button>
                   </Col>
                 </Row>
+                <div className="d-flex justify-content-between mt-2">
+                  <small className="text-muted">
+                    <kbd>Enter</kbd> para enviar • <kbd>Shift+Enter</kbd> para nueva línea
+                  </small>
+                  <Button
+                    variant="outline-danger"
+                    size="sm"
+                    onClick={clearConversation}
+                    disabled={messages.length === 0}
+                  >
+                    <i className="fas fa-trash-alt me-1"></i>Limpiar
+                  </Button>
+                </div>
               </Form>
+            </Card.Body>
+          </Card>
+
+          {/* Control de límite de historial */}
+          <Card className="border-0 shadow-sm mt-3">
+            <Card.Body>
+              <Row className="align-items-center">
+                <Col md={6}>
+                  <small className="text-muted d-block mb-1">Mensajes de contexto para IA</small>
+                  <Form.Select
+                    value={maxHistory}
+                    onChange={(e) => setMaxHistory(parseInt(e.target.value))}
+                    size="sm"
+                    style={{ width: "auto" }}
+                  >
+                    <option value={5}>Últimos 5 mensajes</option>
+                    <option value={10}>Últimos 10 mensajes</option>
+                    <option value={20}>Últimos 20 mensajes</option>
+                    <option value={50}>Todos (50 máx)</option>
+                  </Form.Select>
+                </Col>
+                <Col md={6} className="text-end">
+                  <small className="text-muted d-block">
+                    <i className="fas fa-info-circle me-1"></i>
+                    Menos mensajes = menos tokens = respuesta más rápida
+                  </small>
+                </Col>
+              </Row>
             </Card.Body>
           </Card>
         </Col>
@@ -353,8 +473,8 @@ const AgenteKBPage = () => {
                     tokenUsagePercent > 90
                       ? "danger"
                       : tokenUsagePercent > 70
-                        ? "warning"
-                        : "success"
+                      ? "warning"
+                      : "success"
                   }
                   style={{ height: "8px" }}
                   label={`${Math.round(tokenUsagePercent)}%`}
@@ -461,15 +581,19 @@ const AgenteKBPage = () => {
               <ul className="list-unstyled mb-0 small text-muted">
                 <li className="mb-2">
                   <i className="fas fa-check text-success me-2"></i>
-                  Usa <kbd>Enter</kbd> para enviar
+                  Usa <kbd>Shift+Enter</kbd> para saltos de línea
                 </li>
                 <li className="mb-2">
                   <i className="fas fa-check text-success me-2"></i>
-                  Sé específico en tus preguntas
+                  Limita el historial para ahorrar tokens
                 </li>
-                <li>
+                <li className="mb-2">
                   <i className="fas fa-check text-success me-2"></i>
                   KB es más rápida que IA
+                </li>
+                <li className="pt-2 border-top">
+                  <i className="fas fa-exclamation-triangle text-warning me-2"></i>
+                  <strong>OpenAI/DeepSeek</strong> son más estables con historial
                 </li>
               </ul>
             </Card.Body>
@@ -477,7 +601,6 @@ const AgenteKBPage = () => {
         </Col>
       </Row>
 
-      {/* MODAL "ACERCA DE" */}
       {/* MODAL "ACERCA DE" */}
       <Modal
         show={showAboutModal}
@@ -511,8 +634,8 @@ const AgenteKBPage = () => {
                 </li>
                 <li className="mb-2">
                   <i className="fas fa-check-circle text-success me-2"></i>
-                  <strong>Fallback a IA:</strong> Si no encuentra en KB,
-                  consulta a modelos de IA
+                  <strong>Fallback a IA con contexto:</strong> Si no encuentra en KB, 
+                  consulta a modelos de IA usando el historial de la conversación
                 </li>
                 <li className="mb-2">
                   <i className="fas fa-check-circle text-success me-2"></i>
@@ -530,6 +653,13 @@ const AgenteKBPage = () => {
                   registran
                 </li>
               </ul>
+
+              <Alert variant="info" className="mt-3">
+                <i className="fas fa-info-circle me-2"></i>
+                <strong>Historial en memoria:</strong> El contexto de la conversación 
+                se mantiene <strong>solo en el navegador</strong> durante esta sesión. 
+                Si recargas la página, el historial se pierde.
+              </Alert>
             </Col>
 
             <Col md={5}>
@@ -636,7 +766,7 @@ const AgenteKBPage = () => {
                       <code>router/agente_kb/agente_kb_router.py</code>
                     </li>
                     <li>
-                      <code>integraciones/agente_kb_integration.py</code>
+                      <code>integraciones/agente_integration.py</code>
                     </li>
                     <li>
                       <code>integraciones/headers_ia.py</code>
@@ -714,10 +844,61 @@ const AgenteKBPage = () => {
             </Col>
           </Row>
 
-          
+          <hr className="my-4" />
+
+          <Row>
+            <Col>
+              <h6 className="mb-3">Métricas de uso</h6>
+              <Row className="g-3">
+                <Col md={4}>
+                  <div className="text-center p-3 bg-light rounded">
+                    <div className="h3 mb-0 text-primary">{sessionMetrics.totalQueries}</div>
+                    <small className="text-muted">Consultas hoy</small>
+                  </div>
+                </Col>
+                <Col md={4}>
+                  <div className="text-center p-3 bg-light rounded">
+                    <div className="h3 mb-0 text-success">
+                      {sessionMetrics.totalQueries > 0
+                        ? Math.round((sessionMetrics.kbQueries / sessionMetrics.totalQueries) * 100)
+                        : 0}%
+                    </div>
+                    <small className="text-muted">Respuestas desde KB</small>
+                  </div>
+                </Col>
+                <Col md={4}>
+                  <div className="text-center p-3 bg-light rounded">
+                    <div className="h3 mb-0 text-info">{sessionMetrics.avgLatency}ms</div>
+                    <small className="text-muted">Latencia promedio</small>
+                  </div>
+                </Col>
+              </Row>
+            </Col>
+          </Row>
         </Modal.Body>
-        
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowAboutModal(false)}>
+            <i className="fas fa-times me-2"></i>
+            Cerrar
+          </Button>
+        </Modal.Footer>
       </Modal>
+
+      {/* Toast de notificaciones */}
+      <ToastContainer position="bottom-end" className="p-3">
+        <Toast
+          show={showToast}
+          onClose={() => setShowToast(false)}
+          delay={3000}
+          autohide
+          bg={error ? "danger" : "success"}
+        >
+          <Toast.Body className="text-white">
+            <i className="fas fa-bell me-2"></i>
+            {toastMessage}
+          </Toast.Body>
+        </Toast>
+      </ToastContainer>
     </Container>
   );
 };

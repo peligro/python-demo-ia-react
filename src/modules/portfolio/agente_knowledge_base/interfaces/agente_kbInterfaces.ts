@@ -41,3 +41,11 @@ export interface AgenteKBState {
   error: string | null;
   selectedModel: string;
 }
+export interface SessionMetrics {
+  totalQueries: number;
+  totalTokens: number;
+  kbQueries: number;
+  aiQueries: number;
+  avgLatency: number;
+  lastQueryTime: Date | null;
+}

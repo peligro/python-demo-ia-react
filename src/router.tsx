@@ -130,14 +130,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/portfolio/agente-kb",
-        element: (
-          <ProtectedRoute>
-            <AgenteKBPage />
-          </ProtectedRoute>
-        ),
-      },
-      {
         path: "/portfolio/prompt-basic",
         element: (
           <ProtectedRoute>
@@ -198,6 +190,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <VideoAnalysisPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/agente-kb",
+        element: (
+          <ProtectedRoute>
+            <AgenteKBPage />
           </ProtectedRoute>
         ),
       },
