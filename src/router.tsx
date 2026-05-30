@@ -23,6 +23,7 @@ import HomeMenuPage from "./modules/admin/home_menu/pages/HomeMenuPage";
 import AgenteKBPage from "./modules/portfolio/agente_knowledge_base/pages/AgenteKBPage";
 import PromptBasicPage from "./modules/portfolio/prompt_basic/pages/PromptBasicPage";
 import TraduccionPage from "./modules/portfolio/traduccion_textos/pages/TraduccionPage";
+import AnalisisSentimientoPage from "./modules/portfolio/analisis_sentimiento/pages/AnalisisSentimientoPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -144,6 +145,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <TraduccionPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/analisis-de-sentimiento",
+        element: (
+          <ProtectedRoute>
+            <AnalisisSentimientoPage />
           </ProtectedRoute>
         ),
       },
