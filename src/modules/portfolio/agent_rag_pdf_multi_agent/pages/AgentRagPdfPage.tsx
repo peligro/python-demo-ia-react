@@ -145,6 +145,7 @@ const AgentRagPdfPage = () => {
       setQueueProviders([
         { name: "redis", status: "available" as const },
         { name: "sqs", status: "available" as const },
+        { name: "kafka", status: "available" as const },
       ]);
       setSelectedProvider("redis");
     }
@@ -1331,6 +1332,9 @@ const AgentRagPdfPage = () => {
                 </Badge>
                 <Badge bg="secondary" className="p-2">
                   <i className="fab fa-aws me-1"></i>AWS SQS
+                </Badge>
+                <Badge bg="secondary" className="p-2">
+                  <i className="fas fa-bolt me-1"></i>Kafka
                 </Badge>
               </div>
 
