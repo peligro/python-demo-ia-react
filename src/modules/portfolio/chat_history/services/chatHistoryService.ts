@@ -1,3 +1,4 @@
+//src/modules/portfolio/chat_history/services/chatHistoryService.ts
 import { api } from "../../../../common/api/api";
 import type { 
   ChatHistoryRequest, 

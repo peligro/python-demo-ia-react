@@ -1,3 +1,4 @@
+//src/modules/portfolio/agente_knowledge_base/pages/AgenteKBPage.tsx
 import { useState, useRef, useEffect } from "react";
 import {
   Card,

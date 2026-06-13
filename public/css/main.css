@@ -1,3 +1,4 @@
+/*public/css/main.css*/
 @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600;700&display=swap");
 
 :root {
@@ -694,3 +695,25 @@ footer {
   transform: scale(1.1);
 }
 
+.cursor-pointer { cursor: pointer; }
+.sticky-top { position: sticky; top: 1rem; z-index: 100; }
+
+/* Scrollbar personalizado para áreas de chat/historial */
+[style*="overflowY: auto"] {
+  scrollbar-width: thin;
+  scrollbar-color: #adb5bd #f8f9fa;
+}
+[style*="overflowY: auto"]::-webkit-scrollbar {
+  width: 6px;
+}
+[style*="overflowY: auto"]::-webkit-scrollbar-track {
+  background: #f8f9fa;
+  border-radius: 3px;
+}
+[style*="overflowY: auto"]::-webkit-scrollbar-thumb {
+  background: #adb5bd;
+  border-radius: 3px;
+}
+[style*="overflowY: auto"]::-webkit-scrollbar-thumb:hover {
+  background: #868e96;
+}

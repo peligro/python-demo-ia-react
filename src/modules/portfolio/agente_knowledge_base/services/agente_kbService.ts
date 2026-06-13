@@ -1,3 +1,4 @@
+//src/modules/portfolio/agente_knowledge_base/services/agente_kbService.ts
 import { api } from "../../../../common/api/api";
 import type { QueryRequest, QueryResponse } from "../interfaces/agente_kbInterfaces";
 

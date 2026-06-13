@@ -1,4 +1,4 @@
-// Tipos alineados con los schemas de FastAPI
+//src/modules/portfolio/agente_knowledge_base/interfaces/agente_kbInterfaces.ts
 
 export interface MetricsResponse {
   input_tokens: number;

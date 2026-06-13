@@ -1,3 +1,4 @@
+//src/componentes/Frontend.tsx
 import { Outlet } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { AuthContext } from "../context/AuthContext";

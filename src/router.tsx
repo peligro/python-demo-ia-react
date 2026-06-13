@@ -1,3 +1,4 @@
+//src/router.tsx
 import { createBrowserRouter, Navigate } from "react-router-dom";
 // 👇 Componentes de protección
 
@@ -30,6 +31,7 @@ import ImageRecognitionPage from "./modules/portfolio/image_recognition/pages/Im
 import AudioTranscriptPage from "./modules/portfolio/audio_transcript/pages/AudioTranscriptPage";
 import VideoAnalysisPage from "./modules/portfolio/video_analysis/pages/VideoAnalysisPage";
 import AgenteKBLogsPage from "./modules/portfolio/agente_kb_logs/pages/AgenteKBLogsPage";
+import AgentRagPdfPage from "./modules/portfolio/agent_rag_pdf_multi_agent/pages/AgentRagPdfPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -207,6 +209,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AgenteKBLogsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio/agent-rag-pdfmulti-agent",
+        element: (
+          <ProtectedRoute>
+            <AgentRagPdfPage />
           </ProtectedRoute>
         ),
       },

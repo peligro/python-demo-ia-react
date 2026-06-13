@@ -1,17 +1,11 @@
+//src/components/Header.tsx
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import AlertCustom from "../common/ui/AlertCustom";
-import type { UserResponse } from "../modules/seguridad/services/authService";
+import type { HeaderProps } from "../common/interfaces/HeaderPropsInterface";
+ 
 
-interface HeaderProps {
-  time: string;
-  fechaTexto: string;
-  setShowMobileSidebar: (show: boolean) => void;
-  showLogoutConfirm: boolean;
-  setShowLogoutConfirm: (show: boolean) => void;
-  onConfirmLogout: () => void;
-  user: UserResponse | null;
-}
+
 
 const Header: React.FC<HeaderProps> = ({
   time,

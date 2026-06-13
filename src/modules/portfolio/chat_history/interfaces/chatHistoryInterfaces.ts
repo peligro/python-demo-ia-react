@@ -1,3 +1,4 @@
+//src/modules/portfolio/chat_history/interfaces/chatHistoryInterfaces.ts
 export interface ChatMessage {
   role: "user" | "assistant";
   content: string;
