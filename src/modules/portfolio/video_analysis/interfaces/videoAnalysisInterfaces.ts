@@ -1,3 +1,4 @@
+//src/modules/portfolio/video_analysis/interfaces/videoAnalysisInterfaces.ts
 export interface VideoAnalysisRequest {
   video_path: string;
   prompt?: string;

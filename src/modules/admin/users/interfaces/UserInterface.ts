@@ -1,3 +1,4 @@
+//src/modules/admin/users/interfaces/UserInterface.ts
 // Tipos base del API
 export interface UserItem {
   id: number;

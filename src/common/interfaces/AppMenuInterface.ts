@@ -1,3 +1,4 @@
+//src/interfaces/AppMenuItemInterface.ts
 export interface AppMenuItem {
   id: number;
   label: string;

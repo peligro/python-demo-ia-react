@@ -1,3 +1,4 @@
+//src/common/helpers/helpers.ts
 export const normalize = (str: string): string => {
   return str.replace(/\/+/g, "/").replace(/\/$/, "") || "/";
 };

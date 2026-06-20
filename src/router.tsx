@@ -32,6 +32,7 @@ import AudioTranscriptPage from "./modules/portfolio/audio_transcript/pages/Audi
 import VideoAnalysisPage from "./modules/portfolio/video_analysis/pages/VideoAnalysisPage";
 import AgenteKBLogsPage from "./modules/portfolio/agente_kb_logs/pages/AgenteKBLogsPage";
 import AgentRagPdfPage from "./modules/portfolio/agent_rag_pdf_multi_agent/pages/AgentRagPdfPage";
+import FaceDetectionPage from "./modules/portfolio_cv/face_detection/pages/FaceDetectionPage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -217,6 +218,14 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <AgentRagPdfPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio-cv/face-detection",
+        element: (
+          <ProtectedRoute>
+            <FaceDetectionPage />
           </ProtectedRoute>
         ),
       },

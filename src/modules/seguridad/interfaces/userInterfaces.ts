@@ -1,3 +1,4 @@
+//src/modules/seguridad/interfaces/iserInterfaces.ts
 export interface UserResponse {
   id: number;
   name: string;

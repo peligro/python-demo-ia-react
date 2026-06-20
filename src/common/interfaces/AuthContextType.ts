@@ -1,4 +1,4 @@
-
+//src/interfaces/AuthContextType.ts
 /**
  * Representa un módulo con sus permisos (items) que tiene asignado un usuario.
  * Se obtiene desde la API /api/app/me

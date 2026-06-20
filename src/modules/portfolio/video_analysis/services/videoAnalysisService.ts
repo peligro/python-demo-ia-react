@@ -1,3 +1,4 @@
+//src/modules/portfolio/video_analysis/services/videoAnalysisService.ts
 import { api } from "../../../../common/api/api";
 import type { 
   VideoAnalysisRequest, 

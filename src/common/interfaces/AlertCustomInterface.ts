@@ -1,4 +1,4 @@
-
+//src/interfaces/AlertCustomInterface.ts
 export interface AlertCustomInterface
 {
     estado: boolean;

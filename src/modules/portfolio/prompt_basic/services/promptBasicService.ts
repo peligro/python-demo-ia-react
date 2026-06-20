@@ -1,3 +1,4 @@
+//src/modules/portfolio/prompt_basic/services/promptBasicService.ts
 import { api } from "../../../../common/api/api";
 import type { PromptBasicRequest, PromptBasicResponse } from "../interfaces/promptBasicInterfaces";
 

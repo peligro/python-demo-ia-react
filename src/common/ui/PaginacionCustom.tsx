@@ -1,3 +1,4 @@
+//src/common/ui/PaginationCustom.tsx
 import type { PaginacionCustomProps } from "../interfaces/PaginacionInfo";
 
 const PaginacionCustom: React.FC<PaginacionCustomProps> = ({ datos, onPageChange }) => {

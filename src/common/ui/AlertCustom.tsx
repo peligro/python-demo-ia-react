@@ -1,4 +1,4 @@
-
+//src/common/ui/AlertCustom.tsx
 import { useEffect, useState } from "react"; 
 import { Button, Modal } from "react-bootstrap";
 import type { AlertCustomInterface } from "../interfaces/AlertCustomInterface";

@@ -1,3 +1,4 @@
+//src/modules/portfolio/prompt_basic/interfaces/promtBasicInterfaces.ts
 export interface MetricsResponse {
   input_tokens: number;
   output_tokens: number;

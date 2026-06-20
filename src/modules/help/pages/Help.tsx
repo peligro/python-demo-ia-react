@@ -1,3 +1,4 @@
+//src/modules/help/pages/Help.tsx
 const Help = () => {
   return (
     <>

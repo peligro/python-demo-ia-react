@@ -1,4 +1,4 @@
-
+//src/interfaces/SidebarInterface.ts
 import type { MenuItem } from "./MenuItemInterface";
 import type { Module } from "./AuthContextType";
 

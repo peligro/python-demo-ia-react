@@ -1,3 +1,4 @@
+//src/modules/seguridad/services/authService.ts
 import { api } from "../../../common/api/api";
 import type { LoginRequest, UserResponse } from "../interfaces/userInterfaces";
 

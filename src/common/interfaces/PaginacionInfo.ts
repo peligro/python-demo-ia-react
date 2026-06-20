@@ -1,3 +1,4 @@
+//src/interfaces/PaginationInfo.ts
 export interface PaginationInfo {
     current_page: number;
     per_page: number;

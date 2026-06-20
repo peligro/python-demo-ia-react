@@ -1,3 +1,4 @@
+//src/common/service/commonService.ts
 import { api } from "../api/api";
 import type { AppMenuItem } from "../interfaces/AppMenuInterface";
 
