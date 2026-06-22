@@ -33,6 +33,12 @@ import VideoAnalysisPage from "./modules/portfolio/video_analysis/pages/VideoAna
 import AgenteKBLogsPage from "./modules/portfolio/agente_kb_logs/pages/AgenteKBLogsPage";
 import AgentRagPdfPage from "./modules/portfolio/agent_rag_pdf_multi_agent/pages/AgentRagPdfPage";
 import FaceDetectionPage from "./modules/portfolio_cv/face_detection/pages/FaceDetectionPage";
+import OCRPage from "./modules/portfolio_cv/ocr/pages/OCRPage";
+import OCRBasicPage from "./modules/portfolio_cv/ocr/pages/OCRBasicPage";
+import OCRPreprocessPage from "./modules/portfolio_cv/ocr/pages/OCRPreprocessPage";
+import OCRExtractPage from "./modules/portfolio_cv/ocr/pages/OCRExtractPage";
+import OCRComparePage from "./modules/portfolio_cv/ocr/pages/OCRComparePage";
+import OCRInvoicePage from "./modules/portfolio_cv/ocr/pages/OCRInvoicePage";
 
 const router = createBrowserRouter([
   // 🔐 Rutas de autenticación (públicas)
@@ -226,6 +232,54 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <FaceDetectionPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio-cv/ocr",
+        element: (
+          <ProtectedRoute>
+            <OCRPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio-cv/ocr/basic",
+        element: (
+          <ProtectedRoute>
+            <OCRBasicPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio-cv/ocr/preprocess",
+        element: (
+          <ProtectedRoute>
+            <OCRPreprocessPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio-cv/ocr/extract",
+        element: (
+          <ProtectedRoute>
+            <OCRExtractPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio-cv/ocr/invoice",
+        element: (
+          <ProtectedRoute>
+            <OCRInvoicePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/portfolio-cv/ocr/compare",
+        element: (
+          <ProtectedRoute>
+            <OCRComparePage />
           </ProtectedRoute>
         ),
       },

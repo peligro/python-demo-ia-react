@@ -90,11 +90,11 @@ const Header: React.FC<HeaderProps> = ({
               >
                 <img
                   src="https://www.cesarcancino.com/wp-content/themes/cesarcancino/assets/img/logo.jpg"
-                  alt="Tamila"
+                  alt="César Cancino | AI & Computer Vision Portfolio"
                   height="44"
                   className="rounded me-2"
                 />
-                <span className="fw-bold d-none d-sm-inline">TAMILA</span>
+                <span className="fw-bold d-none d-sm-inline">César Cancino | AI & Computer Vision Portfolio</span>
               </Link>
             </div>
 
